@@ -9,6 +9,7 @@ readme = "README.md"
 python = "^3.11"
 scikit-learn = "^1.5.2"
 pandas = "^2.2.3"
+click = "^8.1.7"
 
 
 [tool.black]
@@ -23,3 +24,6 @@ plugins = "numpy.typing.mypy_plugin"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+evaluate-single-features = "rf_model.single_feature:evaluate_single_features"
