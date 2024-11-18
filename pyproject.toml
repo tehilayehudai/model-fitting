@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "rf-model"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+scikit-learn = "^1.5.2"
+pandas = "^2.2.3"
+
+
+[tool.black]
+line-length = 88
+target-version = ['py311']
+
+
+[tool.mypy]
+plugins = "numpy.typing.mypy_plugin"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
