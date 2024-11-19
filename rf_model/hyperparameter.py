@@ -8,7 +8,7 @@ def get_hyperparameters_grid() -> dict[str, list[Any]]:
     # Number of trees in random forest
     n_estimators = [int(x) for x in np.linspace(start=100, stop=2000, num=20)]
     # Number of features to consider at every split
-    max_features = ["auto", "sqrt"]
+    max_features = ["log2", "sqrt"]
     # Maximum number of levels in tree
     max_depth: list[int | None] = [int(x) for x in np.linspace(10, 110, num=11)]
     max_depth.append(
