@@ -5,15 +5,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import cross_val_score, StratifiedKFold
 import operator
 import click
-
-
-def read_hits(path: str) -> tuple[npt.ArrayLike, npt.ArrayLike, list[str]]:
-    """Read the table of motif hits across replicates."""
-    counts = pd.read_csv(path)
-    feature_names = list(counts.iloc[:, 2:].columns)
-    X = counts.iloc[:, 2:].to_numpy()
-    y = np.where(np.logical_not((counts.iloc[:, 1] == "other").to_numpy()), 1, 0)
-    return (X, y, feature_names)
+from rf_model.data import read_hits
 
 
 def select_perfect(
@@ -50,7 +42,7 @@ def print_scores(feature_scores: list[tuple[str, float]]) -> None:
 @click.option("--seed", type=int, default=42)
 @click.option("--cv_num_of_splits", type=int, default=2)
 def evaluate_single_features(path: str, seed: int, cv_num_of_splits: int) -> None:
-    X, y, feature_names = read_hits(path)
+    X, y, feature_names, _ = read_hits(path)
     feature_scores = select_perfect(X, y, feature_names, seed, cv_num_of_splits)
     print_scores(feature_scores)
 

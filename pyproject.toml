@@ -28,3 +28,4 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.scripts]
 evaluate-single-features = "rf_model.single_feature:evaluate_single_features"
 generate-hyperparameters = "rf_model.hyperparameter:generate_hyperparameters"
+train-rf = "rf_model.train_random_forest:train_rf"
