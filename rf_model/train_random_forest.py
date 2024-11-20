@@ -78,7 +78,7 @@ def write_error_rates(output_path, cv_avg_error_rates, number_of_features_per_mo
     output_file = os.path.join(output_path, file_name)
     with open(output_file, "w") as f_handle:
         f_handle.write(f"Features\tErrors\n")
-        for num, error in zip(number_of_features_per_model, cv_avg_error_rates):
+        for num, error in sorted(zip(number_of_features_per_model, cv_avg_error_rates), key= itemgetter(0)):
             f_handle.write(f"{num}\t{error}\n")
 
 
