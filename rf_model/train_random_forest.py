@@ -10,6 +10,7 @@ from operator import itemgetter
 import joblib
 import os
 from sklearn.model_selection import cross_val_score, StratifiedKFold
+import pandas as pd
 
 
 def load_configuration(configurations_json, index) -> dict[str, Any]:
@@ -28,6 +29,7 @@ def initial_train(X, y, configuration, random_forest_seed):
 def iterative_train(
     rf: RandomForestClassifier,
     model: RandomForestClassifier,
+    feature_names,
     decreasing_feature_importance,
     X,
     y: npt.ArrayLike,
@@ -62,10 +64,8 @@ def iterative_train(
         number_of_features //= 2
 
         # extract only the (new) half most important features
-        features_indexes_to_keep = sorted(
-            decreasing_feature_importance[:number_of_features]
-        )
-        X = original_X[:, features_indexes_to_keep]
+        features_indexes_to_keep = decreasing_feature_importance[:number_of_features]
+        X = original_X[feature_names[features_indexes_to_keep]]
 
         if number_of_features > 0:
             model = rf.fit(X, y)
@@ -78,7 +78,9 @@ def write_error_rates(output_path, cv_avg_error_rates, number_of_features_per_mo
     output_file = os.path.join(output_path, file_name)
     with open(output_file, "w") as f_handle:
         f_handle.write(f"Features\tErrors\n")
-        for num, error in sorted(zip(number_of_features_per_model, cv_avg_error_rates), key= itemgetter(0)):
+        for num, error in sorted(
+            zip(number_of_features_per_model, cv_avg_error_rates), key=itemgetter(0)
+        ):
             f_handle.write(f"{num}\t{error}\n")
 
 
@@ -123,12 +125,20 @@ def train_rf(
     seed: int,
 ) -> None:
     X, y, feature_names, sample_names = read_hits(hits_path)
+    X_df = pd.DataFrame(X)
+    X_df.columns = feature_names
     configuration = load_configuration(conf_path, conf_index)
     rf, initial_model, importances, decreasing_feature_importance = initial_train(
-        X, y, configuration, seed
+        X_df, y, configuration, seed
     )
     cv_avg_error_rates, number_of_features_per_model, output_models = iterative_train(
-        rf, initial_model, decreasing_feature_importance, X, y, cv_num_of_splits
+        rf,
+        initial_model,
+        np.array(feature_names),
+        decreasing_feature_importance,
+        X_df,
+        y,
+        cv_num_of_splits,
     )
     write_error_rates(output_path, cv_avg_error_rates, number_of_features_per_model)
     write_feature_importances(output_path, importances, feature_names)
