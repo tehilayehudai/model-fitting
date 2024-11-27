@@ -43,6 +43,7 @@ def print_scores(feature_scores: list[tuple[str, float]]) -> None:
 @click.option("--cv_num_of_splits", type=int, default=2)
 def evaluate_single_features(path: str, seed: int, cv_num_of_splits: int) -> None:
     X, y, feature_names, _ = read_hits(path)
+    X = X.to_numpy()
     feature_scores = select_perfect(X, y, feature_names, seed, cv_num_of_splits)
     print_scores(feature_scores)
 
