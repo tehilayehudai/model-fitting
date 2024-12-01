@@ -2,12 +2,13 @@ import click
 import joblib
 import pandas as pd
 import os
+import operator
 
 
 def write_error_rate(error_summary, output_path):
     with open(output_path, "w") as f:
         f.write(f"number_of_features\terror_rate\tnum_of_errors\n")
-        for number_of_features, error_rate, error_sum in error_summary:
+        for number_of_features, error_rate, error_sum in sorted(error_summary, key=operator.itemgetter(0)):
             f.write(f"{number_of_features}\t{error_rate}\t{error_sum}\n")
 
 
@@ -17,7 +18,6 @@ def prediction(model_path: str, sample_name, X, y, output_file):
     error_rate = 1 - model_score
     predictions = model.predict(X)
     errors = predictions != y
-    print(errors)
     with open(output_file, "w") as f:
         f.write(f"Error rate: {error_rate}\n")
         f.write(f"sample name\ttrue label\tprediction\tprediction score\n")
